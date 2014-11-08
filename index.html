@@ -1,0 +1,61 @@
+<html ng-app="mlady">
+<head>
+
+<title>My little angular demo yawn</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+<script>
+var mlady = angular.module('mlady', []);
+
+mlady.controller('MLadyController', function ($scope, $http) {
+	$scope.ip="174.51.72.248";
+	var id = 0;
+	
+	$scope.addresses = [];
+
+	$scope.lookup = function() {
+		$http.get("http://www.telize.com/geoip/"+$scope.ip).success(function(geoData) {
+			$scope.addresses.push({
+				"id":id,
+				"ip":geoData["ip"], 
+			   "longitude":geoData["longitude"],
+			   "latitude":geoData["latitude"],
+			   "continent_code":geoData["continent_code"],
+			   "timezone":geoData["timezone"],
+			   "isp":geoData["isp"],
+			   "country":geoData["country"]
+							   });
+		id++;
+		});
+
+	};
+});
+
+$().ready(function() {
+});
+</script>
+
+</head>
+
+<body>
+<div ng-controller="MLadyController">
+	<label>Input an IP address</label><input type="text" name="ip" ng-model="ip"/>
+    <button ng-click="lookup()">Lookup</button>
+
+	<ul ng-repeat="address in addresses | orderBy:'id':true">
+	<li><label>IP Address</label> - {{address.ip}}</li>
+	<li><label>Longitude</label> - {{address.longitude}}</li>
+	<li><label>Latitude</label> - {{address.latitude}}</li>
+	<li><label>Continent</label> - {{address.continent_code}}</li>
+	<li><label>TimeZone</label> - {{address.timezone}}</li>
+	<li><label>ISP</label> - {{address.isp}}</li>
+	<li><label>Country</label> - {{address.country}}</li>
+	</ul>
+</div>
+
+</body>
+
+
+</html>
